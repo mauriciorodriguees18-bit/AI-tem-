@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aí Tem — Procurou? Aí tem.</title>
+<meta name="description" content="Aí Tem — classificados locais de Jacobina-BA.">
+<style>
+:root{--green:#00c853;--dark:#101a1a;--soft:#f2f5f4;--text:#142020}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--soft);color:var(--text)}
+header{background:linear-gradient(135deg,#071414,#102626);color:#fff;padding:18px 5% 28px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1180px;margin:auto}
+.logo{font-size:30px;font-weight:800}.logo span{color:var(--green)}
+nav button,.hero button,.post button{border:0;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer}
+nav button{background:var(--green);color:#06200f}
+.hero{max-width:1180px;margin:36px auto 0}.hero h1{font-size:clamp(32px,6vw,58px);margin:0 0 10px}.hero p{color:#d4dddd;font-size:18px}
+.search{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}.search input{flex:1;min-width:220px;padding:16px;border-radius:14px;border:0;font-size:16px}.search button{background:var(--green);color:#052010}
+main{max-width:1180px;margin:28px auto;padding:0 5%}
+.location{font-weight:700;margin:10px 0 22px}
+.categories{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.cat{background:#fff;border:1px solid #dce4e2;border-radius:16px;padding:18px;text-align:center;cursor:pointer;transition:.2s}.cat:hover{transform:translateY(-2px);border-color:var(--green)}
+.cat b{display:block;margin-top:7px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin:30px 0 14px;gap:12px;flex-wrap:wrap}
+select{padding:10px;border-radius:10px;border:1px solid #ccd7d4;background:white}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.card{background:white;border-radius:18px;overflow:hidden;border:1px solid #dfe7e4;box-shadow:0 5px 18px #0b252010}
+.card .photo{height:165px;background:linear-gradient(135deg,#d8e8e2,#879c95);display:flex;align-items:center;justify-content:center;font-size:54px}
+.card .info{padding:16px}.tag{display:inline-block;background:#dff9e9;color:#087c3b;border-radius:20px;padding:5px 9px;font-size:12px;font-weight:700}.price{font-size:22px;font-weight:800;color:#07843e;margin:8px 0}.muted{color:#71807d;font-size:14px}
+footer{margin-top:50px;background:#0c1717;color:#cbd6d4;padding:30px 5%;text-align:center}
+.modal{display:none;position:fixed;inset:0;background:#0009;align-items:center;justify-content:center;padding:20px;z-index:5}.modal.open{display:flex}.box{background:white;border-radius:20px;padding:24px;max-width:520px;width:100%}.box input,.box textarea,.box select{width:100%;margin:7px 0 12px;padding:12px}.close{float:right;background:#eee;border:0;border-radius:50%;width:32px;height:32px}
+.empty{padding:35px;background:white;border-radius:18px;text-align:center;color:#687572}
+@media(max-width:600px){nav .navtext{display:none}}
+</style>
+</head>
+<body>
+<header>
+<nav>
+  <div class="logo">⌖ <span>Aí</span>Tem</div>
+  <button onclick="openModal()">＋ Anunciar grátis</button>
+</nav>
+<section class="hero">
+  <h1>Procurou? <span style="color:var(--green)">Aí tem.</span></h1>
+  <p>Encontre produtos, veículos, imóveis e serviços perto de você.</p>
+  <div class="search">
+    <input id="search" placeholder="O que você procura? Ex.: moto, celular, casa..." oninput="render()">
+    <button onclick="render()">🔎 Buscar</button>
+  </div>
+</section>
+</header>
+
+<main>
+<div class="location">📍 Jacobina — BA</div>
+<h2>Categorias</h2>
+<div class="categories">
+  <div class="cat" onclick="setCat('Imóveis')">🏠<b>Imóveis</b></div>
+  <div class="cat" onclick="setCat('Veículos')">🏍️<b>Veículos</b></div>
+  <div class="cat" onclick="setCat('Celulares')">📱<b>Celulares</b></div>
+  <div class="cat" onclick="setCat('Serviços')">🔧<b>Serviços</b></div>
+  <div class="cat" onclick="setCat('Empregos')">💼<b>Empregos</b></div>
+  <div class="cat" onclick="setCat('Produtos')">🛒<b>Produtos</b></div>
+  <div class="cat" onclick="setCat('Alimentação')">🍽️<b>Alimentação</b></div>
+  <div class="cat" onclick="setCat('Todos')">•••<b>Todos</b></div>
+</div>
+
+<div class="toolbar"><h2 id="resultTitle">Anúncios recentes</h2><select id="category" onchange="render()"><option>Todos</option><option>Veículos</option><option>Celulares</option><option>Imóveis</option><option>Produtos</option><option>Serviços</option></select></div>
+<div id="grid" class="grid"></div>
+</main>
+
+<footer><strong>Aí Tem</strong> — Procurou? Aí tem.<br><small>Protótipo funcional • Jacobina-BA</small></footer>
+
+<div id="modal" class="modal">
+<div class="box">
+<button class="close" onclick="closeModal()">×</button>
+<h2>Publicar anúncio</h2>
+<label>Título</label><input id="newTitle" placeholder="Ex.: Honda CG 160">
+<label>Preço</label><input id="newPrice" placeholder="Ex.: R$ 12.500">
+<label>Categoria</label><select id="newCat"><option>Produtos</option><option>Veículos</option><option>Celulares</option><option>Imóveis</option><option>Serviços</option></select>
+<label>Descrição</label><textarea id="newDesc" rows="4" placeholder="Conte sobre o produto ou serviço..."></textarea>
+<button style="background:var(--green);width:100%" onclick="publish()">Publicar anúncio</button>
+</div></div>
+
+<script>
+let ads=[
+ {title:"Honda CG 160 Fan",price:"R$ 12.500",cat:"Veículos",emoji:"🏍️",desc:"2022 • 12.000 km • Flex"},
+ {title:"Yamaha Factor 125",price:"R$ 8.900",cat:"Veículos",emoji:"🏍️",desc:"2019 • documentação em dia"},
+ {title:"iPhone 13",price:"R$ 2.300",cat:"Celulares",emoji:"📱",desc:"128 GB • usado em ótimo estado"},
+ {title:"Casa para alugar",price:"R$ 700/mês",cat:"Imóveis",emoji:"🏠",desc:"2 quartos • Jacobina-BA"},
+ {title:"Mesa de jantar",price:"R$ 450",cat:"Produtos",emoji:"🪑",desc:"Bom estado • retirada em Jacobina"},
+ {title:"Eletricista residencial",price:"A combinar",cat:"Serviços",emoji:"🔧",desc:"Atendimento em Jacobina e região"}
+];
+function setCat(c){document.getElementById('category').value=c;render()}
+function render(){
+ const q=document.getElementById('search').value.toLowerCase();
+ const c=document.getElementById('category').value;
+ const list=ads.filter(a=>(c==="Todos"||a.cat===c)&&(!q||(a.title+" "+a.desc+" "+a.cat).toLowerCase().includes(q)));
+ document.getElementById('resultTitle').textContent=list.length+" anúncio"+(list.length===1?"":"s")+" encontrado"+(list.length===1?"":"s");
+ document.getElementById('grid').innerHTML=list.length?list.map(a=>`<article class="card"><div class="photo">${a.emoji}</div><div class="info"><span class="tag">${a.cat}</span><h3>${a.title}</h3><div class="price">${a.price}</div><div class="muted">📍 Jacobina — BA</div><p>${a.desc}</p><button onclick="alert('No sistema real, aqui abriria o contato com o anunciante.')" style="background:#0e2923;color:white;width:100%">Ver anúncio</button></div></article>`).join(""):'<div class="empty">Nenhum anúncio encontrado. Tente outra busca.</div>';
+}
+function openModal(){document.getElementById('modal').classList.add('open')}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function publish(){
+ const title=document.getElementById('newTitle').value.trim();
+ if(!title){alert("Digite um título.");return}
+ ads.unshift({title,price:document.getElementById('newPrice').value||"A combinar",cat:document.getElementById('newCat').value,emoji:"📦",desc:document.getElementById('newDesc').value||"Anúncio publicado no Aí Tem."});
+ closeModal();render();document.getElementById('newTitle').value="";
+}
+render();
+</script>
+</body>
+</html>
